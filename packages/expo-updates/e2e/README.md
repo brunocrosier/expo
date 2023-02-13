@@ -33,6 +33,7 @@ node packages/expo-updates/e2e/__tests__/setup/create-eas-project-assets
 npx pod install
 yarn detox:ios:release:build
 yarn detox:ios:release:test
+```
 
 - To run Android tests:
 

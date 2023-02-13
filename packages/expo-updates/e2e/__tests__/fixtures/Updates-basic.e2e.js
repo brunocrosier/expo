@@ -7,6 +7,7 @@ const {
   copyAssetToStaticFolder,
   copyBundleToStaticFolder,
   getUpdateManifestForBundleFilename,
+  getRollbackDirective,
   serverHost,
   serverPort,
 } = require('./utils/update');
@@ -324,5 +325,84 @@ describe('', () => {
     await device.launchApp();
     const secondMessage = await Server.waitForRequest(10000 * TIMEOUT_BIAS);
     expect(secondMessage).toBe('test');
+  });
+
+  it('supports rollbacks', async () => {
+    jest.setTimeout(300000 * TIMEOUT_BIAS);
+    const bundleFilename = 'bundle1.js';
+    const newNotifyString = 'test-update-1';
+    const hash = await copyBundleToStaticFolder(
+      projectRoot,
+      bundleFilename,
+      newNotifyString,
+      platform
+    );
+    const manifest = getUpdateManifestForBundleFilename(
+      new Date(),
+      hash,
+      'test-update-1-key',
+      bundleFilename,
+      []
+    );
+
+    Server.start(serverPort);
+    await Server.serveSignedManifest(manifest, projectRoot);
+    await device.installApp();
+    await device.launchApp({
+      newInstance: true,
+    });
+    const firstRequest = await Server.waitForUpdateRequest(10000 * TIMEOUT_BIAS);
+    const message = await Server.waitForRequest(10000 * TIMEOUT_BIAS);
+    expect(message).toBe('test');
+
+    // give the app time to load the new update in the background
+    await setTimeout(2000 * TIMEOUT_BIAS);
+    expect(Server.consumeRequestedStaticFiles().length).toBe(1);
+
+    // restart the app so it will launch the new update
+    await device.terminateApp();
+    await device.launchApp();
+    const secondRequest = await Server.waitForUpdateRequest(10000 * TIMEOUT_BIAS);
+    const updatedMessage = await Server.waitForRequest(10000 * TIMEOUT_BIAS);
+    expect(updatedMessage).toBe(newNotifyString);
+
+    // serve a rollback now
+    const rollbackDirective = getRollbackDirective(new Date());
+    await Server.serveSignedDirective(rollbackDirective, projectRoot);
+
+    // restart the app so it will fetch the rollback
+    await device.terminateApp();
+    await device.launchApp();
+    const thirdRequest = await Server.waitForUpdateRequest(10000 * TIMEOUT_BIAS);
+
+    // give the app time to load the rollback in the background
+    await setTimeout(2000 * TIMEOUT_BIAS);
+
+    // restart the app so it will launch the rollback
+    await device.terminateApp();
+    await device.launchApp();
+    const fourthRequest = await Server.waitForUpdateRequest(10000 * TIMEOUT_BIAS);
+    const rolledBackMessage = await Server.waitForRequest(10000 * TIMEOUT_BIAS);
+    expect(rolledBackMessage).toBe('test');
+
+    expect(secondRequest.headers['expo-embedded-update-id']).toBeDefined();
+    expect(secondRequest.headers['expo-embedded-update-id']).toEqual(
+      firstRequest.headers['expo-embedded-update-id']
+    );
+    expect(thirdRequest.headers['expo-embedded-update-id']).toEqual(
+      firstRequest.headers['expo-embedded-update-id']
+    );
+    expect(fourthRequest.headers['expo-embedded-update-id']).toEqual(
+      firstRequest.headers['expo-embedded-update-id']
+    );
+
+    expect(firstRequest.headers['expo-current-update-id']).toEqual(
+      firstRequest.headers['expo-embedded-update-id']
+    );
+    expect(secondRequest.headers['expo-current-update-id']).toEqual(manifest.id);
+    expect(thirdRequest.headers['expo-current-update-id']).toEqual(manifest.id);
+    expect(fourthRequest.headers['expo-current-update-id']).toEqual(
+      firstRequest.headers['expo-embedded-update-id']
+    );
   });
 });

@@ -89,11 +89,24 @@ function getUpdateManifestForBundleFilename(date, hash, key, bundleFilename, ass
   };
 }
 
+/**
+ * Common method used in all the tests to create valid rollback directives
+ */
+function getRollbackDirective(date) {
+  return {
+    type: 'rollBackToEmbedded',
+    parameters: {
+      commitTime: date.toISOString(),
+    },
+  };
+}
+
 const Updates = {
   copyBundleToStaticFolder,
   copyAssetToStaticFolder,
   findAssets,
   getUpdateManifestForBundleFilename,
+  getRollbackDirective,
   serverHost,
   serverPort,
 };

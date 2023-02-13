@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const express = require('express');
+const FormData = require('form-data');
 const fs = require('fs');
 const path = require('path');
 const { serializeDictionary } = require('structured-headers');
@@ -13,8 +14,8 @@ let logEntries = [];
 let responsesToServe = [];
 
 let updateRequest = null;
-let manifestToServe = null;
-let manifestHeadersToServe = null;
+
+let multipartResponseToServe = null;
 let requestedStaticFiles = [];
 
 function start(port) {
@@ -32,8 +33,7 @@ function stop() {
   logEntries = [];
   responsesToServe = [];
   updateRequest = null;
-  manifestToServe = null;
-  manifestHeadersToServe = null;
+  multipartResponseToServe = null;
   requestedStaticFiles = [];
 }
 
@@ -113,13 +113,36 @@ async function waitForLogEntries(timeout) {
 
 app.get('/update', (req, res) => {
   updateRequest = req;
-  if (manifestToServe) {
-    if (manifestHeadersToServe) {
-      Object.keys(manifestHeadersToServe).forEach((headerName) => {
-        res.set(headerName, manifestHeadersToServe[headerName]);
+  if (multipartResponseToServe) {
+    const form = new FormData();
+
+    if (multipartResponseToServe.manifest) {
+      form.append('manifest', JSON.stringify(multipartResponseToServe.manifest), {
+        contentType: 'application/json',
+        header: {
+          'content-type': 'application/json; charset=utf-8',
+          'expo-signature': multipartResponseToServe.manifestSignature,
+        },
       });
     }
-    res.json(manifestToServe);
+
+    if (multipartResponseToServe.directive) {
+      form.append('directive', JSON.stringify(multipartResponseToServe.directive), {
+        contentType: 'application/json',
+        header: {
+          'content-type': 'application/json; charset=utf-8',
+          'expo-signature': multipartResponseToServe.directiveSignature,
+        },
+      });
+    }
+
+    res.statusCode = 200;
+    res.setHeader('expo-protocol-version', 1);
+    res.setHeader('expo-sfv-version', 0);
+    res.setHeader('cache-control', 'private, max-age=0');
+    res.setHeader('content-type', `multipart/mixed; boundary=${form.getBoundary()}`);
+    res.write(form.getBuffer());
+    res.end();
   } else {
     res.status(404).send('No update available');
   }
@@ -141,11 +164,6 @@ async function waitForUpdateRequest(timeout) {
   const request = updateRequest;
   updateRequest = null;
   return request;
-}
-
-function serveManifest(manifest, headers = null) {
-  manifestToServe = manifest;
-  manifestHeadersToServe = headers;
 }
 
 async function getPrivateKeyAsync(projectRoot) {
@@ -178,7 +196,25 @@ async function serveSignedManifest(manifest, projectRoot) {
     keyid: 'main',
   });
   const signature = serializeDictionary(dictionary);
-  serveManifest(manifest, { 'expo-protocol-version': '0', 'expo-signature': signature });
+  multipartResponseToServe = {
+    manifest,
+    manifestSignature: signature,
+  };
+}
+
+async function serveSignedDirective(directive, projectRoot) {
+  const privateKey = await getPrivateKeyAsync(projectRoot);
+  const directiveString = JSON.stringify(directive);
+  const hashSignature = signRSASHA256(directiveString, privateKey);
+  const dictionary = convertToDictionaryItemsRepresentation({
+    sig: hashSignature,
+    keyid: 'main',
+  });
+  const signature = serializeDictionary(dictionary);
+  multipartResponseToServe = {
+    directive,
+    directiveSignature: signature,
+  };
 }
 
 const Server = {
@@ -187,8 +223,8 @@ const Server = {
   waitForLogEntries,
   waitForRequest,
   waitForUpdateRequest,
-  serveManifest,
   serveSignedManifest,
+  serveSignedDirective,
   consumeRequestedStaticFiles,
 };
 
