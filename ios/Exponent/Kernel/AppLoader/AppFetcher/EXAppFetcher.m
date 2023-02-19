@@ -9,6 +9,7 @@
 #import "EXKernel.h"
 #import "EXVersions.h"
 
+#import <EXManifests/EXManifests-Swift.h>
 #import <React/RCTUtils.h>
 
 NS_ASSUME_NONNULL_BEGIN

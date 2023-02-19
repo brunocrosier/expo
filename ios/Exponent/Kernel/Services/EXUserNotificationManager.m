@@ -5,6 +5,7 @@
 #import "EXRemoteNotificationManager.h"
 #import "EXEnvironment.h"
 #import "EXAbstractLoader.h"
+#import <EXManifests/EXManifests-Swift.h>
 
 static NSString * const scopedIdentifierSeparator = @":";
 

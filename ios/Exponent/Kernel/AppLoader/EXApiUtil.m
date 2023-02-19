@@ -4,6 +4,7 @@
 
 #import <CommonCrypto/CommonDigest.h>
 #import <React/RCTUtils.h>
+#import <EXManifests/EXManifests-Swift.h>
 
 #import "EXCachedResource.h"
 

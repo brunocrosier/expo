@@ -2113,9 +2113,10 @@ PODS:
   - EXLocation (15.1.1):
     - ExpoModulesCore
   - EXManifests (0.5.1):
-    - EXJSONUtils
+    - ExpoModulesCore
   - EXManifests/Tests (0.5.1):
-    - EXJSONUtils
+    - ExpoModulesCore
+    - ExpoModulesTestCore
   - EXMediaLibrary (15.2.1):
     - ExpoModulesCore
     - React-Core
@@ -2228,6 +2229,7 @@ PODS:
   - EXUpdates (0.16.1):
     - ASN1Decoder (~> 1.8)
     - EASClient
+    - EXJSONUtils
     - EXManifests
     - ExpoModulesCore
     - EXStructuredHeaders
@@ -2236,6 +2238,7 @@ PODS:
   - EXUpdates/Tests (0.16.1):
     - ASN1Decoder (~> 1.8)
     - EASClient
+    - EXJSONUtils
     - EXManifests
     - ExpoModulesCore
     - ExpoModulesTestCore
@@ -4708,7 +4711,7 @@ SPEC CHECKSUMS:
   Analytics: 3106b5af9b799c934f98a68ab8ba199f1c603fdb
   AppAuth: 8fca6b5563a5baef2c04bee27538025e4ceb2add
   ASN1Decoder: 6110fdeacfdb41559b1481457a1645be716610aa
-  boost: 57d2868c099736d80fcd648bf211b4431e51a558
+  boost: a7c83b31436843459a1961bfd74b96033dc77234
   Branch: 23b6b9351d5574377e7a764841cfb13a70c2799b
   CocoaLumberjack: 2f44e60eb91c176d471fdba43b9e3eae6a721947
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
@@ -4727,9 +4730,9 @@ SPEC CHECKSUMS:
   EXFileSystem: 844e86ca9b5375486ecc4ef06d3838d5597d895d
   EXFont: 6ea3800df746be7233208d80fe379b8ed74f4272
   EXImageLoader: fd053169a8ee932dd83bf1fe5487a50c26d27c2b
-  EXJSONUtils: 48b1e764ac35160e6f54d21ab60d7d9501f3e473
+  EXJSONUtils: de3ed1d52896922dab84c7c475b9165a2e786a56
   EXLocation: 74a0ba446f54fd585ea6cfcd19a25644bf22c30d
-  EXManifests: 8afcd1cb32f7a098771fbf4b2f19bb1fb937bb47
+  EXManifests: a8fff089136d9ce87a72203998e31228606ec6e7
   EXMediaLibrary: 945e03614e6b90e70d15be886b9aebedc9d4fade
   EXNotifications: dd628737af60fc8cc62dccebacd326b0fbbc0dcb
   EXPermissions: 2291c6736a823b4c680d5bf8e12d3c1c5d11da35
@@ -4773,7 +4776,7 @@ SPEC CHECKSUMS:
   EXSQLite: 848167441b14cb6cdd6ae46c8d62289161a79550
   EXStructuredHeaders: b1a48d732562e2cc81f11771bcfd29534f5d9254
   EXTaskManager: f8257faa4c20acfc3f31e21ab82a62544d70db85
-  EXUpdates: d4e900d3fe75542631a89935fd66172098b86ac4
+  EXUpdates: 9efc29e53f8de7d0f703a541c581e6c9cda7dbc1
   EXUpdatesInterface: dd699d1930e28639dcbd70a402caea98e86364ca
   FBAEMKit: c7f82b5145d446bcbbcd50485c032689032fc6a2
   FBAudienceNetwork: e0fcc9091fced34910ed0b6da06f129db46ac9e6
@@ -4824,7 +4827,7 @@ SPEC CHECKSUMS:
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   Protobuf: 120350fc38646e2dedc26f49ecba778184ea1de2
   Quick: 749aa754fd1e7d984f2000fe051e18a3a9809179
-  RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
+  RCT-Folly: 0080d0a6ebf2577475bda044aa59e2ca1f909cda
   RCTRequired: bec48f07daf7bcdc2655a0cde84e07d24d2a9e2a
   RCTTypeSafety: 171394eebacf71e1cfad79dbfae7ee8fc16ca80a
   React: d7433ccb6a8c36e4cbed59a73c0700fc83c3e98a

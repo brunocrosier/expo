@@ -3,6 +3,7 @@
 #import "EXBuildConstants.h"
 #import "EXVersions.h"
 #import "EXKernelUtil.h"
+#import <EXManifests/EXManifests-Swift.h>
 
 @interface EXVersions ()
 

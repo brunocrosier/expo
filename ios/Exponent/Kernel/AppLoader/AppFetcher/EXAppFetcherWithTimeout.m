@@ -5,6 +5,7 @@
 #import "EXAppFetcherWithTimeout.h"
 #import "EXAbstractLoader.h"
 #import "EXUtil.h"
+#import <EXManifests/EXManifests-Swift.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -2,6 +2,7 @@
 
 #import <React/RCTRootView.h>
 #import <ExpoModulesCore/EXDefines.h>
+#import <EXManifests/EXManifests-Swift.h>
 
 #import "EXDevMenuViewController.h"
 #import "EXDevMenuManager.h"

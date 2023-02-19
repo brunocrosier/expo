@@ -6,6 +6,7 @@
 #import "EXKernel.h"
 #import "EXKernelAppRecord.h"
 #import "EXUtil.h"
+#import <EXManifests/EXManifests-Swift.h>
 
 @interface EXErrorView ()
 
